@@ -45,10 +45,6 @@ import com.google.zxing.Result;
 import java.io.IOException;
 import java.lang.reflect.Field;
 
-/**
- * Created by lizhaotailang on 2017/2/13.
- */
-
 public class CaptureActivity extends AppCompatActivity
         implements SurfaceHolder.Callback {
 
@@ -200,8 +196,7 @@ public class CaptureActivity extends AppCompatActivity
         bundle.putString("result", rawResult.getText());
         resultIntent.putExtras(bundle);
 
-        this.setResult(RESULT_OK,resultIntent);
-        this.finish();
+        new AlertDialog.Builder(this).setTitle(rawResult.getText()).create().show();
     }
 
     /**
