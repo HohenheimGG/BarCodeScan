@@ -197,6 +197,7 @@ public class CaptureActivity extends AppCompatActivity
         resultIntent.putExtras(bundle);
 
         new AlertDialog.Builder(this).setTitle(rawResult.getText()).create().show();
+        restartPreviewAfterDelay(1000);
     }
 
     /**

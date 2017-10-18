@@ -12,13 +12,14 @@ import {
 } from 'react-native';
 
 import BCSNavBar from 'BCSNavBar';
+import {ScanProductModule} from 'Common';
 
 export default class App extends Component<{}> {
   render() {
     return (
       <View style={styles.container}>
         <BCSNavBar
-          leftPress = {_ => {}}
+          leftPress = {_ => {ScanProductModule.openScanPage()}}
           leftContent = {'扫描'}
           rightPress = {_ => {}}
           rightContent = {'删除'}
