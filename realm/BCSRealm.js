@@ -1,8 +1,8 @@
 
 import Realm from 'realm';
-import Cnonstant from 'BCSConstant';
+import Constant from 'BCSConstant';
 
-const realm = __init__();
+var BCSRealm;
 /**
  * 存入数据
  * @param  {String} dbName:   string        [description]
@@ -12,7 +12,7 @@ const realm = __init__();
  * @return {[type]}           [description]
  */
 function write(dbName: string = '', params: Array = [], beforeCallback: function, afterCallback: function) {
-    realm.write(() => {
+    BCSRealm.write(() => {
         beforeCallback && beforeCallback();
         for(let i = 0; i < params.length; i ++) {
             let temp = params[i];
@@ -20,15 +20,24 @@ function write(dbName: string = '', params: Array = [], beforeCallback: function
                 console.warn('realm's input is not Object');
                 break;
             }
-            realm.create(dbName, ...temp);
+            BCSRealm.create(dbName, ...temp);
         }
         afterCallback && afterCallback();
     })
 }
 
+function load(dbName: string = '', filtered: string = '', beforeCallback: function, afterCallback: function) {
+
+}
+
+/**
+ * 初始化
+ * @return {[type]} [description]
+ */
 function __init__() {
     let realmSchame = {
-        name: Cnonstant.DB_NAME,
+        name: Constant.DB_NAME,
+        primaryKey:'id'
         properties: {
             id: 'int',
             name: 'string',
@@ -37,7 +46,22 @@ function __init__() {
             price: 'int'
         }
     };
-    return new Realm({schame: [realmSchame]});
+    Realm.open({schame: [realmSchame]}).then(realm => {
+        BCSRealm = realm;
+        list = [];
+        for(let i = 0; i < 200000; i ++)
+            list.push({
+                name: `name${i}`,
+                code: `name-${i}-num${i}-price-${i}`,
+                description: `num-${i}`,
+                price: getRandomInt()
+            });
+        write(Constant.DB_NAME, list);
+    })
+}
+
+function getRandomInt(min, max) {
+    return Math.floor(Math.random() * (max - min + 1)) + min;
 }
 
 module.exports = {
