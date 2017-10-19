@@ -4,6 +4,9 @@ import android.app.Application;
 
 import com.barcodescan.react.BCSReactPackage;
 import com.facebook.react.ReactApplication;
+
+import io.realm.Realm;
+import io.realm.RealmConfiguration;
 import io.realm.react.RealmReactPackage;
 import com.facebook.react.ReactNativeHost;
 import com.facebook.react.ReactPackage;
@@ -45,5 +48,10 @@ public class MainApplication extends Application implements ReactApplication {
   public void onCreate() {
     super.onCreate();
     SoLoader.init(this, /* native exopackage */ false);
+
+    Realm.init(this);
+    RealmConfiguration configuration = new RealmConfiguration.Builder()
+            .build();
+    Realm.setDefaultConfiguration(configuration);
   }
 }
