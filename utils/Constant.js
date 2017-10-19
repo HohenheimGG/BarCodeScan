@@ -3,5 +3,6 @@
  */
 
 module.exports = {
-    DB_NAME: 'PRODUCT_INFO'
+  PRODUCT_INFO_DB: 'product_info',
+  IS_INIT: 'is_init_db'
 };
