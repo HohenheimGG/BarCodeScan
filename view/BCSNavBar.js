@@ -33,7 +33,7 @@ class BCSNavBar extends Component{
   }
 
   _renderLeft() {
-    if(!this.props.leftPress)
+    if(!this.props.leftPress && this.props.leftContent == undefined)
       return <View/>;
     return (
       <TextWrap onPress = {this.props.leftPress}>
@@ -55,7 +55,7 @@ class BCSNavBar extends Component{
   }
 
   _renderRight() {
-    if(!this.props.rightPress)
+    if(!this.props.rightPress && this.props.rightContent == undefined)
       return null;
     return (
       <TextWrap onPress = {this.props.rightPress}>
