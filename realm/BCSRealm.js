@@ -10,7 +10,6 @@ class BCSRealm {
 
   // 构造
   constructor(afterCallback: Function) {
-    console.warn('initDB');
     this.realmInstance = undefined;
     this.initDB(afterCallback);
   }
@@ -81,10 +80,8 @@ class BCSRealm {
         price: 'int'
       }
     };
-    console.warn('before open');
     Realm.open({schema: [realmSchema]}).then(async realm => {
       this.realmInstance = realm;
-      console.warn('after open');
       //数据库数据已初始化
       let result = await AsyncStorage.getItem(Constant.IS_INIT);
       if(result == Constant.HAS_INIT) {

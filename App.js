@@ -46,7 +46,6 @@ export default class App extends Component<{}> {
   }
 
   afterCall(result)  {
-    console.warn('result: ' + result);
     if(!result) {
       this.initHolder.initFail();
       return;

@@ -17,7 +17,6 @@ class InitHolder {
   title = LOADING;
   
   initRealm(component: Component, afterCallback: Function) {
-    console.warn("createInstance");
     BCSRealm.createInstance(component, afterCallback);
   }
 
