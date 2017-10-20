@@ -2,22 +2,32 @@
  * Created by hohenheim on 17/10/20.
  */
 
-import {Component} from 'react';
 import {observable, action} from 'mobx'
-import {initRealm} from 'BCSRealm';
+import {Component} from 'react';
+import {BCSRealm} from 'RealmController';
+
+const LOADING = '数据初始化中...';
+const FAILURE = '加载失败';
 
 class InitHolder {
   @observable
   hasInit = false;
 
-  @action
-  initRealm(component: Component) {
-    initRealm(component, this);
+  @observable
+  title = LOADING;
+  
+  initRealm(component: Component, afterCallback: Function) {
+    console.warn("createInstance");
+    BCSRealm.createInstance(component, afterCallback);
   }
 
   @action
   changeState() {
     this.hasInit = !this.hasInit;
+  }
+
+  initFail() {
+    this.title = FAILURE;
   }
 }
 

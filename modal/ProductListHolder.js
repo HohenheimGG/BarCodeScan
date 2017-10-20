@@ -3,14 +3,17 @@
  */
 
 import {observable, action, computed} from 'mobx'
-import BCSRealm from 'BCSRealm';
+import {BCSRealm} from 'RealmController';
 import Constant from 'BCSConstant';
 
 const LOAD_NUM = 20;
 
 class ProductListHolder {
 
-  startCount = 0;
+  // 构造
+  constructor() {
+    this.startCount = 0;
+  }
 
   @observable
   dataList = [];
@@ -24,9 +27,11 @@ class ProductListHolder {
   @action
   footLoad() {
     this.footLoading = !this.footLoading;
-    this.dataList = [].concat(this.dataList, this.load(this.startCount, this.startCount + LOAD_NUM));
-    this.footLoading = !this.footLoading;
-    this.startCount += LOAD_NUM;
+    setTimeout(_ => {
+      this.dataList = this.dataList.concat(this.load(this.startCount, this.startCount + LOAD_NUM));
+      this.footLoading = !this.footLoading;
+      this.startCount += LOAD_NUM;
+    }, 0);
   }
 
   @action
@@ -35,16 +40,12 @@ class ProductListHolder {
     this.startCount = 0;
     this.dataList = [].concat(this.load(this.startCount, LOAD_NUM));
     this.headLoading = !this.headLoading;
+    this.startCount = LOAD_NUM;
   }
 
   load(start, end) {
-    let result = BCSRealm.load(Constant.PRODUCT_INFO_DB);
+    let result = BCSRealm.getInstance().load(Constant.PRODUCT_INFO_DB);
     return result.slice(start, end);
-  }
-
-  @computed
-  get getList() {
-    return this.dataList;
   }
 
   @action

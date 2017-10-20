@@ -11,10 +11,10 @@ import {
   View,
   ActivityIndicator
 } from 'react-native';
+import {observer} from 'mobx-react/native'
 
 import BCSNavBar from 'BCSNavBar';
 import ProductInfoListView from 'ProductInfoListView';
-import {initRealm} from 'BCSRealm';
 
 import {
   ScanProductModule
@@ -25,35 +25,42 @@ import {
   SCREEN_HEIGHT
 } from 'Theme';
 import {
-  ProductListHolder
+  ProductListHolder,
+  InitHolder
 } from 'BCSHolder';
 
-
+@observer
 export default class App extends Component<{}> {
 
   // 构造
   constructor(props) {
     super(props);
     this.productHolder = new ProductListHolder();
+    this.initHolder = new InitHolder();
     this._openScanPage = this._openScanPage.bind(this);
-    this.state = {
-      hasInit: false
-    }
+    this.afterCall = this.afterCall.bind(this);
   }
 
   componentDidMount() {
-    initRealm(this, result => {
-      this.setState({
-        hasInit: true
-      })
-    });
+    this.initHolder.initRealm(this, this.afterCall);
+  }
+
+  afterCall(result)  {
+    console.warn('result: ' + result);
+    if(!result) {
+      this.initHolder.initFail();
+      return;
+    }
+    this.productHolder.headLoad();
+    this.initHolder.changeState();
   }
 
   render() {
-    if(!this.state.hasInit) {
+    let hasInit = this.initHolder.hasInit;
+    if(!hasInit) {
       return (
         <View style = {styles.loadingContainer}>
-          <Text>数据初始化中...</Text>
+          <Text>{this.initHolder.title}</Text>
         </View>
       );
     }

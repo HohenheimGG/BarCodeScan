@@ -9,15 +9,17 @@ import {
   ListView,
   View,
   Text,
-  TouchableOpacity,
   RefreshControl,
   ActivityIndicator
 } from 'react-native';
+import {BCSTouchableOpacity as TouchableOpacity} from 'BCSTouchable';
 
 import ProductInfoItem from './ProductInfoItem';
 
 import {observer} from 'mobx-react/native'
 import {Grid, SCREEN_WIDTH} from 'Theme';
+
+const LOAD_MORE = '加载更多';
 
 @observer
 class ProductInfoListView extends Component {
@@ -37,12 +39,11 @@ class ProductInfoListView extends Component {
   }
 
   render() {
-    let list = this.props.productList.dataList;
-    this.dataSource = this.dataSource.cloneWithRows(list);
-    console.warn('count: ' + this.dataSource.getRowCount());
     return (
       <ListView
-        dataSource = {this.dataSource}
+        dataSource = {this.dataSource.cloneWithRows(this.props.productList.dataList)}
+        removeClippedSubviews = {true}
+        enableEmptySections = {true}
         renderRow = {this._renderRow}
         renderSeparator = {this._renderSeparator}
         renderFooter = {this._renderFooter}
@@ -76,25 +77,15 @@ class ProductInfoListView extends Component {
   _renderFooter() {
     if(this.props.productList.dataList.length == 0)
       return null;
-
-    if(!this.props.productList.headLoading) {
-      return (
-        <TouchableOpacity
-          style = {[styles.row, styles.center]}
-          onPress={this.loadMore}
-        >
-          <Text>加载更多</Text>
-        </TouchableOpacity>
-      );
-    }
-
     return (
-      <View style = {[styles.row, styles.center]}>
-        <ActivityIndicator
-          animated={this.props.productList.headLoading}
-        />
-      </View>
-    )
+      <TouchableOpacity
+        style = {[styles.row, styles.center]}
+        onPress={this.loadMore}
+        disabled = {this.props.productList.headLoading}
+      >
+        <Text>{LOAD_MORE}</Text>
+      </TouchableOpacity>
+    );
   }
 
   refresh() {
