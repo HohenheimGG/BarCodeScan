@@ -58,7 +58,8 @@ public class RealmMigration  {
 
     public static boolean fileExists(String filePath) {
         File file = new File(filePath);
-        return file.exists();		    }
+        return file.exists();
+    }
 
     private String copyBundledRealmFile(String oldFilePath, String outFileName) {
         try {
@@ -67,7 +68,7 @@ public class RealmMigration  {
             FileOutputStream outputStream = new FileOutputStream(file);
             FileInputStream inputStream = new FileInputStream(new File(oldFilePath));
 
-        byte[] buf = new byte[1024];
+            byte[] buf = new byte[1024];
             int bytesRead;
             while ((bytesRead = inputStream.read(buf)) > 0) {
                 outputStream.write(buf, 0, bytesRead);

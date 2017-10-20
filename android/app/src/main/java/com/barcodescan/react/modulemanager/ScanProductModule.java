@@ -2,6 +2,7 @@ package com.barcodescan.react.modulemanager;
 
 import android.content.Intent;
 
+import com.barcodescan.realm.RealmMigration;
 import com.barcodescan.zxing.CaptureActivity;
 import com.facebook.react.bridge.ReactApplicationContext;
 import com.facebook.react.bridge.ReactContextBaseJavaModule;
@@ -29,5 +30,11 @@ public class ScanProductModule extends ReactContextBaseJavaModule{
     @ReactMethod
     public void openScanPage() {
         context.startActivity(new Intent(context.getCurrentActivity(), CaptureActivity.class));
+    }
+
+    @ReactMethod
+    public void backupDB() {
+        RealmMigration migration = new RealmMigration(context);
+        migration.backup();
     }
 }

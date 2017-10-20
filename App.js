@@ -18,7 +18,7 @@ import {
   ScanProductModule
 } from 'Common';
 import {
-  Grid, 
+  Grid,
   SCREEN_WIDTH
 } from 'Theme';
 import {
@@ -32,6 +32,7 @@ export default class App extends Component<{}> {
     super(props);
     this.productHolder = new ProductListHolder();
     this._openScanPage = this._openScanPage.bind(this);
+    this._backup = this._backup.bind(this);
   }
 
   render() {
@@ -50,7 +51,7 @@ export default class App extends Component<{}> {
       <BCSNavBar
         leftPress = {this._openScanPage}
         leftContent = {'扫描'}
-        rightPress = {this.loadMore}
+        rightPress = {this._backup}
         rightContent = {'删除'}
         title = {'demo'}
       />
@@ -59,7 +60,7 @@ export default class App extends Component<{}> {
 
   _renderListView() {
     return (
-      <ProductInfoListView 
+      <ProductInfoListView
         productList = {this.productHolder}
       />
     );
@@ -67,6 +68,10 @@ export default class App extends Component<{}> {
 
   _openScanPage() {
     ScanProductModule.openScanPage()
+  }
+
+  _backup() {
+    ScanProductModule.backupDB();
   }
 }
 

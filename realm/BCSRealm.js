@@ -56,9 +56,11 @@ function __init__() {
   };
   Realm.open({schema: [realmSchema]}).then(realm => {
     bcsRealm = realm;
+    console.warn('before if')
     if(isInit()) {
       return;
     }
+    console.warn('after if');
     realm.write(_ => {
       for(let i = 0; i < 200000; i ++)
         realm.create(Constant.DB_NAME, {
@@ -81,7 +83,9 @@ function __init__() {
  * @returns {boolean}
  */
 async function isInit() {
+    console.warn('before isinit');
   let result = await AsyncStorage.getItem(Constant.IS_INIT);
+  console.warn('after isinit');
   return !!result;
 }
 
