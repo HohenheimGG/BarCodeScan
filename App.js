@@ -8,22 +8,26 @@ import React, { Component } from 'react';
 import {
   StyleSheet,
   Text,
-  View
+  View,
+  ActivityIndicator
 } from 'react-native';
 
 import BCSNavBar from 'BCSNavBar';
 import ProductInfoListView from 'ProductInfoListView';
+import {initRealm} from 'BCSRealm';
 
 import {
   ScanProductModule
 } from 'Common';
 import {
   Grid,
-  SCREEN_WIDTH
+  SCREEN_WIDTH,
+  SCREEN_HEIGHT
 } from 'Theme';
 import {
   ProductListHolder
 } from 'BCSHolder';
+
 
 export default class App extends Component<{}> {
 
@@ -32,16 +36,31 @@ export default class App extends Component<{}> {
     super(props);
     this.productHolder = new ProductListHolder();
     this._openScanPage = this._openScanPage.bind(this);
-    this._backup = this._backup.bind(this);
+    this.state = {
+      hasInit: false
+    }
+  }
+
+  componentDidMount() {
+    initRealm(this, result => {
+      this.setState({
+        hasInit: true
+      })
+    });
   }
 
   render() {
+    if(!this.state.hasInit) {
+      return (
+        <View style = {styles.loadingContainer}>
+          <Text>数据初始化中...</Text>
+        </View>
+      );
+    }
     return (
       <View style={styles.container}>
-        {[
-        this._renderNavBar(),
-        this._renderListView()
-        ]}
+        {this._renderNavBar()}
+        {this._renderListView()}
       </View>
     );
   }
@@ -51,7 +70,7 @@ export default class App extends Component<{}> {
       <BCSNavBar
         leftPress = {this._openScanPage}
         leftContent = {'扫描'}
-        rightPress = {this._backup}
+        rightPress = {_ => {}}
         rightContent = {'删除'}
         title = {'demo'}
       />
@@ -69,14 +88,18 @@ export default class App extends Component<{}> {
   _openScanPage() {
     ScanProductModule.openScanPage()
   }
-
-  _backup() {
-    ScanProductModule.backupDB();
-  }
 }
 
 const styles = StyleSheet.create({
   container: {
     flex: 1
+  },
+  loadingContainer: {
+    position: 'absolute',
+    width: SCREEN_WIDTH,
+    height: SCREEN_HEIGHT,
+    backgroundColor: 'transparent',
+    justifyContent: 'center',
+    alignItems: 'center'
   }
 });

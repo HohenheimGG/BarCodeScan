@@ -2,12 +2,13 @@
  * @providesModule BCSRealm
  */
 
+import {Component} from 'react';
 import Realm from 'realm';
 import Constant from 'BCSConstant';
 import AsyncStorage from 'AsyncStorage';
+import NumberUtils from 'NumberUtils';
 
 var bcsRealm;
-__init__();
 /**
  * 存入数据
  * @param  {String} dbName:   string        [description]
@@ -33,7 +34,12 @@ function write(dbName: string = '', params: Array = [], beforeCallback: Function
 
 function load(dbName: string = '', filter: string = '', beforeCallback: Function, afterCallback: Function) {
   beforeCallback && beforeCallback();
-  let result = bcsRealm.objects(dbName).filtered(filter);
+  let result;
+  if(!filter)
+    result = bcsRealm.objects(dbName);
+  else
+    result = bcsRealm.objects(dbName).filtered(filter);
+  console.log("ReactNativeJS: " + result);
   afterCallback && afterCallback();
   return result;
 }
@@ -42,7 +48,7 @@ function load(dbName: string = '', filter: string = '', beforeCallback: Function
  * 初始化
  * @return {[type]} [description]
  */
-function __init__() {
+function initRealm(component: Component, afterCallback: Function) {
   let realmSchema = {
     name: Constant.PRODUCT_INFO_DB,
     primaryKey:'id',
@@ -54,46 +60,53 @@ function __init__() {
       price: 'int'
     }
   };
-  Realm.open({schema: [realmSchema]}).then(realm => {
+  Realm.open({schema: [realmSchema]}).then(async realm => {
     bcsRealm = realm;
-    console.warn('before if')
-    if(isInit()) {
+    //数据库数据已初始化
+    let result = await AsyncStorage.getItem(Constant.IS_INIT);
+    if(result == Constant.HAS_INIT) {
+      afterCallback && afterCallback(true);
       return;
     }
-    console.warn('after if');
+    //开始初始化数据
     realm.write(_ => {
+      console.warn('writing');
       for(let i = 0; i < 200000; i ++)
-        realm.create(Constant.DB_NAME, {
+        realm.create(Constant.PRODUCT_INFO_DB, {
           id: i,
           name: `name${i}`,
           code: `name-${i}-num${i}-price-${i}`,
           description: `num-${i}`,
-          price: getRandomInt(0, i)
+          price: NumberUtils.getRandomInt(0, i)
         });
-      console.warn('finish init');
-      AsyncStorage.setItem(Constant.IS_INIT, true);
+      //初始化数据结束
+      AsyncStorage.setItem(Constant.IS_INIT, Constant.HAS_INIT);
+      afterCallback && afterCallback(true);
     });
   }).catch(error => {
     console.warn('error: ' + error);
+    afterCallback && afterCallback(false);
+  }).finally(_ => {
+    //关闭数据库
+    let componentWillUnMount = component.componentWillUnMount;
+    component.componentWillUnMount = function() {
+      componentWillUnMount && componentWillUnMount.apply(this, arguments);
+      close();
+    }
   });
 }
 
 /**
- * 数据库是否已初始化
- * @returns {boolean}
+ * 关闭数据库
  */
-async function isInit() {
-    console.warn('before isinit');
-  let result = await AsyncStorage.getItem(Constant.IS_INIT);
-  console.warn('after isinit');
-  return !!result;
-}
-
-function getRandomInt(min, max) {
-  return Math.floor(Math.random() * (max - min + 1)) + min;
+function close() {
+  if(!bcsRealm)
+    bcsRealm.close();
 }
 
 module.exports = {
   write,
-  load
+  load,
+  close,
+  initRealm
 };

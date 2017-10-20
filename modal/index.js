@@ -3,5 +3,6 @@
  */
 
 module.exports = {
-  ProductListHolder: require('./ProductListHolder')
+  ProductListHolder: require('./ProductListHolder'),
+  InitHolder: require('./InitHolder')
 };

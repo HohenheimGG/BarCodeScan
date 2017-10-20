@@ -10,8 +10,11 @@ import {
   View,
   Text,
   TouchableOpacity,
-  RefreshControl
+  RefreshControl,
+  ActivityIndicator
 } from 'react-native';
+
+import ProductInfoItem from './ProductInfoItem';
 
 import {observer} from 'mobx-react/native'
 import {Grid, SCREEN_WIDTH} from 'Theme';
@@ -25,61 +28,81 @@ class ProductInfoListView extends Component {
     this._renderRow = this._renderRow.bind(this);
     this._renderSeparator = this._renderSeparator.bind(this);
     this._rowHasChanged = this._rowHasChanged.bind(this);
-    this.ds = new ListView.DataSource({
-      rowHasChanged: this._rowHasChanged
+    this._renderFooter = this._renderFooter.bind(this);
+    this.refresh = this.refresh.bind(this);
+    this.loadMore = this.loadMore.bind(this);
+    this.dataSource = new ListView.DataSource({
+      rowHasChanged: (r1, r2) => r1 != r2
     });
-    this.state = {
-      isRefresh: false
-    }
   }
 
   render() {
+    let list = this.props.productList.dataList;
+    this.dataSource = this.dataSource.cloneWithRows(list);
+    console.warn('count: ' + this.dataSource.getRowCount());
     return (
-      <ListView showsVerticalScrollIndicator = {true}
-                enableEmptySections={true}
-                initialListSize = {10}
-                dataSource = {this.ds.cloneWithRows(this.props.productList.dataList)}
-                renderRow = {this._renderRow}
-                renderSeparator = {this._renderSeparator}
-                refreshControl = {
-                    <RefreshControl onRefresh = {() => this.refresh()} refreshing = {!!this.state.isRefresh}/>
+      <ListView
+        dataSource = {this.dataSource}
+        renderRow = {this._renderRow}
+        renderSeparator = {this._renderSeparator}
+        renderFooter = {this._renderFooter}
+        refreshControl = {
+                    <RefreshControl
+                    onRefresh = {() => this.refresh()}
+                    refreshing = {this.props.productList.headLoading}/>
                     }/>
     );
   }
 
   _renderRow(rowData, sectionID, rowID, highlightRow) {
+    console.log("ReactNativeJS: " + JSON.stringify(rowData));
     return (
-      <View key = {rowID}style = {styles.row}>
-        <View style = {{flexDirection: 'row'}}>
-          <Text style = {{width: Grid.a * 20}}>{`name: ${rowData.name}`}</Text>
-          <Text style = {{width: Grid.a * 20}}>{`description: ${rowData.description}`}</Text>
-        </View>
-        <View style = {{flexDirection: 'row', paddingTop: Grid.a * 2}}>
-          <Text style = {{width: Grid.a * 20}}>{`price: ${rowData.price}`}</Text>
-          <Text style = {{width: Grid.a * 29}}>{`code: ${rowData.code}`}</Text>
-        </View>
-      </View>
-    )
+      <ProductInfoItem
+        rowData = {rowData}
+      />
+    );
   }
 
   _renderSeparator(sectionID, rowID, adjacentRowHighlighted) {
     return (
-      <View style = {{width: Grid.A * 12 - Grid.a * 2, height: 1, backgroundColor: 'black'}}/>
-    )
+      <View style = {styles.separator}/>
+    );
   }
 
   _rowHasChanged(prevRowData, nextRowData) {
     return prevRowData !== nextRowData;
   }
-  
-  refresh() {
-    this.changeRefresh(true);
+
+  _renderFooter() {
+    if(this.props.productList.dataList.length == 0)
+      return null;
+
+    if(!this.props.productList.headLoading) {
+      return (
+        <TouchableOpacity
+          style = {[styles.row, styles.center]}
+          onPress={this.loadMore}
+        >
+          <Text>加载更多</Text>
+        </TouchableOpacity>
+      );
+    }
+
+    return (
+      <View style = {[styles.row, styles.center]}>
+        <ActivityIndicator
+          animated={this.props.productList.headLoading}
+        />
+      </View>
+    )
   }
-  
-  changeRefresh(refreshing: boolean) {
-    this.setState({
-      isRefresh: refreshing
-    });
+
+  refresh() {
+    this.props.productList.headLoad();
+  }
+
+  loadMore() {
+    this.props.productList.footLoad();
   }
 }
 
@@ -93,7 +116,12 @@ const styles = StyleSheet.create({
     height: Grid.a * 15,
     width: SCREEN_WIDTH,
     paddingLeft: Grid.a * 3,
+    paddingRight: Grid.a * 3,
     paddingTop: Grid.a * 2
+  },
+  center: {
+    justifyContent: 'center',
+    alignItems: 'center'
   }
 });
 
