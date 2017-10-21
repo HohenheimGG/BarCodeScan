@@ -56,7 +56,6 @@ class ProductInfoListView extends Component {
   }
 
   _renderRow(rowData, sectionID, rowID, highlightRow) {
-    console.log("ReactNativeJS: " + JSON.stringify(rowData));
     return (
       <ProductInfoItem
         rowData = {rowData}

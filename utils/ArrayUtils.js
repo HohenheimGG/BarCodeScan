@@ -2,10 +2,11 @@
  * @providesModule ArrayUtils
  */
 
-function remove(list: Array, index: number) {
-	list.splice(index, index - 1);
+function removeIndex(list: Array, index: number) {
+	[].splice.apply(list, [index, 1]);
+	return list;
 }
 
 module.exports = {
-	remove
+	removeIndex
 };

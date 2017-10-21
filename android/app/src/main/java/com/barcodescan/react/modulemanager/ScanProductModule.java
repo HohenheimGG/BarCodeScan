@@ -31,10 +31,4 @@ public class ScanProductModule extends ReactContextBaseJavaModule{
     public void openScanPage() {
         context.startActivity(new Intent(context.getCurrentActivity(), CaptureActivity.class));
     }
-
-    @ReactMethod
-    public void backupDB() {
-        RealmMigration migration = new RealmMigration(context);
-        migration.backup();
-    }
 }

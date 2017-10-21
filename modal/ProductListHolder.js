@@ -5,6 +5,7 @@
 import {observable, action, computed} from 'mobx'
 import {BCSRealm} from 'RealmController';
 import Constant from 'BCSConstant';
+import ArrayUtils from 'ArrayUtils';
 
 const LOAD_NUM = 20;
 
@@ -48,7 +49,13 @@ class ProductListHolder {
 
   @action
   remove(index: number) {
-    this.dataList = BCSRealm.getInstance().remove(index);
+    BCSRealm.getInstance().remove(Constant.PRODUCT_INFO_DB, index);
+    if(index == 0)
+      this.dataList = this.dataList.slice(1, this.dataList.length);
+    else if(index = this.dataList.length - 1)
+      this.dataList = this.dataList.slice(0, this.dataList.length);
+    else
+      this.dataList = this.dataList.slice(0, index).concat(this.dataList.slice(index + 1, this.dataList.length));
   }
 }
 

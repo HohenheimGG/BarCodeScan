@@ -12,7 +12,7 @@ class BCSRealm {
   // 构造
   constructor(afterCallback: Function) {
     this.realmInstance = undefined;
-    this.objects = [];
+    this.tempList = [];
     this.initDB(afterCallback);
   }
 
@@ -51,7 +51,7 @@ class BCSRealm {
         }
         this.realmInstance.create(dbName, ...temp);
       }
-      this.objects = [];//重置
+      this.tempList = [];//重置
       afterCallback && afterCallback();
     })
   }
@@ -67,12 +67,14 @@ class BCSRealm {
   load(dbName: string = '', filter: string = '', beforeCallback: Function, afterCallback: Function) {
     beforeCallback && beforeCallback();
       let result;
-    if(this.objects.length != 0)
-      result = this.objects;
+    if(this.tempList.length != 0)
+      result = this.tempList;
     else if(!filter)
       result = this.realmInstance.objects(dbName);
     else
       result = this.realmInstance.objects(dbName).filtered(filter);
+
+    this.tempList = result;
     afterCallback && afterCallback();
     return result;
   }
@@ -132,12 +134,11 @@ class BCSRealm {
     BCSRealm.mBCSRealm = null;
   }
 
-  remove(index: number) {
-    this.realmInstance.write(_ => {
-      // let info = this.realmInstance.create(Constant.PRODUCT_INFO_DB, {code: code, id: Number(index)});
-      let item = this.objects[index];
+  remove(dbName: string, index: number) {
+    let item = this.tempList[index];
+    this.realmInstance.write(() => {
       this.realmInstance.delete(item);
-      ArrayUtils.remove(this.objects, index);
+      this.tempList = this.realmInstance.objects(dbName);
     });
   }
 }
