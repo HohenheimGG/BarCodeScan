@@ -3,8 +3,6 @@
  * @providesModule Common
  */
 
-import NativeModules from 'NativeModules';
-
 module.exports = {
-  get ScanProductModule() {return NativeModules.ScanProductModule;} 
+  get ScanProductModule() {return require('./ScanProductModule');}
 };

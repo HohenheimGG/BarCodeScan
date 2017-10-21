@@ -1,4 +1,4 @@
-package com.barcodescan.react;
+package com.barcodescan.react.reactpackage;
 
 import com.barcodescan.react.modulemanager.ScanProductModule;
 import com.facebook.react.ReactPackage;

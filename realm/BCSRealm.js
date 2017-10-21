@@ -35,24 +35,22 @@ class BCSRealm {
   /**
    * 存入数据
    * @param  {String} dbName:   string        [description]
-   * @param  {Object} params:   Array        [description]
+   * @param  {Object} params:   Object        [description]
    * @param  {[type]} beforeCallback: function      [description]
    * @param  {[type]} afterCallback: function      [description]
    * @return {[type]}           [description]
    */
-  write(dbName: string = '', params: Array = [], beforeCallback: Function, afterCallback: Function) {
+  write(dbName: string = '', params: Object = [], beforeCallback: Function, afterCallback: Function) {
     this.realmInstance.write(() => {
       beforeCallback && beforeCallback();
-      for(let i = 0; i < params.length; i ++) {
-        let temp = params[i];
-        if(temp instanceof Object) {
-          console.warn('realm\'s input is not Object');
-          break;
-        }
-        this.realmInstance.create(dbName, ...temp);
+      let code = params.code || '';
+      let tempData = this.tempList.filtered(`code = "${code}"`);
+      if(!tempData) {
+        afterCallback && afterCallback(Constant.INSERT_REPEAT);
+        return;
       }
-      this.tempList = [];//重置
-      afterCallback && afterCallback();
+      this.realmInstance.create(dbName, params);
+      afterCallback && afterCallback(Constant.INSERT_SUCCESS);
     })
   }
 
@@ -66,17 +64,13 @@ class BCSRealm {
      */
   load(dbName: string = '', filter: string = '', beforeCallback: Function, afterCallback: Function) {
     beforeCallback && beforeCallback();
-      let result;
-    if(this.tempList.length != 0)
-      result = this.tempList;
-    else if(!filter)
-      result = this.realmInstance.objects(dbName);
+    if(!filter)
+      this.tempList = this.realmInstance.objects(dbName);
     else
-      result = this.realmInstance.objects(dbName).filtered(filter);
+      this.tempList = this.realmInstance.objects(dbName).filtered(filter);
 
-    this.tempList = result;
     afterCallback && afterCallback();
-    return result;
+    return this.tempList;
   }
 
   /**
@@ -92,7 +86,7 @@ class BCSRealm {
         name: 'string',
         code: 'string',
         description: 'string',
-        price: 'int'
+        price: 'string'
       }
     };
     Realm.open({schema: [realmSchema]}).then(async realm => {
@@ -106,7 +100,7 @@ class BCSRealm {
       //开始初始化数据
       realm.write(_ => {
         for(let i = 0; i < 200000; i ++) {
-          let price = NumberUtils.getRandomInt(0, i);
+          let price = NumberUtils.getRandomInt(0, i) + '';
           realm.create(Constant.PRODUCT_INFO_DB, {
             id: i,
             name: `name${i}`,

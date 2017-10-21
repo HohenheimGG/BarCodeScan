@@ -36,6 +36,7 @@ import android.widget.ImageView;
 import android.widget.RelativeLayout;
 
 import com.barcodescan.R;
+import com.barcodescan.react.controller.ScanProductController;
 import com.barcodescan.zxing.camera.CameraManager;
 import com.barcodescan.zxing.decode.DecodeThread;
 import com.barcodescan.zxing.utils.BeepManager;
@@ -147,6 +148,7 @@ public class CaptureActivity extends AppCompatActivity
     @Override
     protected void onDestroy() {
         inactivityTimer.shutdown();
+        ScanProductController.clearInstance();
         super.onDestroy();
     }
 
@@ -190,13 +192,8 @@ public class CaptureActivity extends AppCompatActivity
         inactivityTimer.onActivity();
         beepManager.playBeepSoundAndVibrate();
 
-        Intent resultIntent = new Intent();
-        bundle.putInt("width", mCropRect.width());
-        bundle.putInt("height", mCropRect.height());
-        bundle.putString("result", rawResult.getText());
-        resultIntent.putExtras(bundle);
 
-        new AlertDialog.Builder(this).setTitle(rawResult.getText()).create().show();
+        ScanProductController.getInstance().handleResult(rawResult.getText());
         restartPreviewAfterDelay(1000);
     }
 

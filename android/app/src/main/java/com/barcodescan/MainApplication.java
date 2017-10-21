@@ -2,7 +2,7 @@ package com.barcodescan;
 
 import android.app.Application;
 
-import com.barcodescan.react.BCSReactPackage;
+import com.barcodescan.react.reactpackage.BCSReactPackage;
 import com.facebook.react.ReactApplication;
 
 import io.realm.Realm;

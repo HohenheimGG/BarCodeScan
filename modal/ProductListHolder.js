@@ -6,8 +6,13 @@ import {observable, action, computed} from 'mobx'
 import {BCSRealm} from 'RealmController';
 import Constant from 'BCSConstant';
 import ArrayUtils from 'ArrayUtils';
+import ToastAndroid from 'ToastAndroid';
 
 const LOAD_NUM = 20;
+const SCAN_CONTENT = 'SCAN_CONTENT';
+const DATA_ERROR = '商品二维码格式错误, 添加失败';
+const DATA_REPEAT = '该商品二维码已存在于数据库';
+const INSERT_SUCCESS = '添加成功';
 
 class ProductListHolder {
 
@@ -56,6 +61,34 @@ class ProductListHolder {
       this.dataList = this.dataList.slice(0, this.dataList.length);
     else
       this.dataList = this.dataList.slice(0, index).concat(this.dataList.slice(index + 1, this.dataList.length));
+  }
+  
+  insert(result: Object) {
+    let code = result[SCAN_CONTENT];
+    let list = code.split('-');
+    if(list.length < 3) {
+      ToastAndroid && ToastAndroid.show(DATA_ERROR, ToastAndroid.SHORT);
+      return;
+    }
+    let params = {
+      id: BCSRealm.getInstance().tempList.length + 1,
+      name: list[0],
+      description: list[1],
+      price: list[2],
+      code: code
+    };
+    console.warn('result: ' + JSON.stringify(params));
+    BCSRealm.getInstance().write(
+      Constant.PRODUCT_INFO_DB,
+      params,
+      undefined,
+      result => {
+        if(result == Constant.INSERT_REPEAT) {
+          ToastAndroid && ToastAndroid.show(DATA_REPEAT, ToastAndroid.SHORT);
+        } else {
+          ToastAndroid && ToastAndroid.show(INSERT_SUCCESS, ToastAndroid.SHORT);
+        }
+    });
   }
 }
 

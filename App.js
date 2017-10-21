@@ -39,6 +39,7 @@ export default class App extends Component<{}> {
     this.initHolder = new InitHolder();
     this._openScanPage = this._openScanPage.bind(this);
     this.afterCall = this.afterCall.bind(this);
+    this.insertData = this.insertData.bind(this);
   }
 
   componentDidMount() {
@@ -59,7 +60,7 @@ export default class App extends Component<{}> {
     if(!hasInit) {
       return (
         <View style = {styles.loadingContainer}>
-          <Text>{this.initHolder.title}</Text>
+          <Text style = {{aligeSelf: 'center'}}>{this.initHolder.title}</Text>
         </View>
       );
     }
@@ -76,8 +77,6 @@ export default class App extends Component<{}> {
       <BCSNavBar
         leftPress = {this._openScanPage}
         leftContent = {'扫描'}
-        rightPress = {_ => {}}
-        rightContent = {'删除'}
         title = {'demo'}
       />
     );
@@ -92,7 +91,11 @@ export default class App extends Component<{}> {
   }
 
   _openScanPage() {
-    ScanProductModule.openScanPage()
+    ScanProductModule.openScanPage(this, this.insertData);
+  }
+
+  insertData(result: Object) {
+    this.productHolder.insert(result);
   }
 }
 
