@@ -4,6 +4,7 @@ import Realm from 'realm';
 import Constant from 'BCSConstant';
 import AsyncStorage from 'AsyncStorage';
 import NumberUtils from 'NumberUtils';
+import ArrayUtils from 'ArrayUtils';
 import {InitHolder} from 'BCSHolder';
 
 class BCSRealm {
@@ -11,6 +12,7 @@ class BCSRealm {
   // 构造
   constructor(afterCallback: Function) {
     this.realmInstance = undefined;
+    this.objects = [];
     this.initDB(afterCallback);
   }
 
@@ -49,14 +51,25 @@ class BCSRealm {
         }
         this.realmInstance.create(dbName, ...temp);
       }
+      this.objects = [];//重置
       afterCallback && afterCallback();
     })
   }
 
+    /**
+     * 加载数据
+     * @param dbName
+     * @param filter
+     * @param beforeCallback
+     * @param afterCallback
+     * @returns {*}
+     */
   load(dbName: string = '', filter: string = '', beforeCallback: Function, afterCallback: Function) {
     beforeCallback && beforeCallback();
-    let result;
-    if(!filter)
+      let result;
+    if(this.objects.length != 0)
+      result = this.objects;
+    else if(!filter)
       result = this.realmInstance.objects(dbName);
     else
       result = this.realmInstance.objects(dbName).filtered(filter);
@@ -90,14 +103,16 @@ class BCSRealm {
       }
       //开始初始化数据
       realm.write(_ => {
-        for(let i = 0; i < 200000; i ++)
+        for(let i = 0; i < 200000; i ++) {
+          let price = NumberUtils.getRandomInt(0, i);
           realm.create(Constant.PRODUCT_INFO_DB, {
             id: i,
             name: `name${i}`,
-            code: `name-${i}-num${i}-price-${i}`,
             description: `num-${i}`,
-            price: NumberUtils.getRandomInt(0, i)
+            price: price,
+            code: `${i}-${i}-${price}`
           });
+        }
         //初始化数据结束
         AsyncStorage.setItem(Constant.IS_INIT, Constant.HAS_INIT);
         afterCallback && afterCallback(true);
@@ -115,6 +130,15 @@ class BCSRealm {
     if(!this.realmInstance)
       this.realmInstance.close();
     BCSRealm.mBCSRealm = null;
+  }
+
+  remove(index: number) {
+    this.realmInstance.write(_ => {
+      // let info = this.realmInstance.create(Constant.PRODUCT_INFO_DB, {code: code, id: Number(index)});
+      let item = this.objects[index];
+      this.realmInstance.delete(item);
+      ArrayUtils.remove(this.objects, index);
+    });
   }
 }
 

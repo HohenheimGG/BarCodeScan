@@ -41,7 +41,7 @@ class ProductInfoListView extends Component {
   render() {
     return (
       <ListView
-        dataSource = {this.dataSource.cloneWithRows(this.props.productList.dataList)}
+        dataSource = {this.dataSource.cloneWithRows(this.props.productHolder.dataList)}
         removeClippedSubviews = {true}
         enableEmptySections = {true}
         renderRow = {this._renderRow}
@@ -50,7 +50,7 @@ class ProductInfoListView extends Component {
         refreshControl = {
                     <RefreshControl
                     onRefresh = {() => this.refresh()}
-                    refreshing = {this.props.productList.headLoading}/>
+                    refreshing = {this.props.productHolder.headLoading}/>
                     }/>
     );
   }
@@ -60,6 +60,8 @@ class ProductInfoListView extends Component {
     return (
       <ProductInfoItem
         rowData = {rowData}
+        productHolder = {this.props.productHolder}
+        index = {rowID}
       />
     );
   }
@@ -75,13 +77,13 @@ class ProductInfoListView extends Component {
   }
 
   _renderFooter() {
-    if(this.props.productList.dataList.length == 0)
+    if(this.props.productHolder.dataList.length == 0)
       return null;
     return (
       <TouchableOpacity
         style = {[styles.row, styles.center]}
         onPress={this.loadMore}
-        disabled = {this.props.productList.headLoading}
+        disabled = {this.props.productHolder.headLoading}
       >
         <Text>{LOAD_MORE}</Text>
       </TouchableOpacity>
@@ -89,11 +91,11 @@ class ProductInfoListView extends Component {
   }
 
   refresh() {
-    this.props.productList.headLoad();
+    this.props.productHolder.headLoad();
   }
 
   loadMore() {
-    this.props.productList.footLoad();
+    this.props.productHolder.footLoad();
   }
 }
 

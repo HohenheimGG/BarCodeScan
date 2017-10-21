@@ -86,7 +86,7 @@ export default class App extends Component<{}> {
   _renderListView() {
     return (
       <ProductInfoListView
-        productList = {this.productHolder}
+        productHolder = {this.productHolder}
       />
     );
   }

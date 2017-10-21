@@ -7,32 +7,61 @@ import {
   StyleSheet,
   View,
   Text,
-  TouchableOpacity
+  Alert
 } from 'react-native';
+import {BCSTouchableOpacity as TouchableOpacity} from 'BCSTouchable';
 import {observer} from 'mobx-react/native'
 import {Grid, SCREEN_WIDTH} from 'Theme';
 
 @observer
 class ProductInfoItem extends Component {
 
+  constructor(props) {
+    super(props);
+    this._onPress = this._onPress.bind(this);
+    this.remove = this.remove.bind(this);
+  }
+
   render() {
     let rowData = this.props.rowData;
     return (
-      <View style = {styles.row}>
+      <TouchableOpacity
+        style = {styles.row}
+        onLongPress = {this._onPress}
+      >
         {this._renderRowContent(`name: ${rowData.name}`, `description: ${rowData.description}`)}
         {this._renderRowContent(`price: ${rowData.price}`, `code: ${rowData.code}`)}
-      </View>
+      </TouchableOpacity>
     )
   }
 
   _renderRowContent(arg1, arg2) {
     return (
-      <View style = {{flexDirection: 'row'}}>
+      <View
+        style = {{flexDirection: 'row'}}
+      >
         <Text style = {{width: Grid.a * 20}}>{arg1}</Text>
         <Text style = {{width: Grid.a * 20}}>{arg2}</Text>
       </View>
     );
   }
+
+  _onPress() {
+    Alert.alert('提示',
+      '删除数据',
+      [{
+        text: '删除', onPress: this.remove
+      }, {
+        text: '取消'
+      }],
+      {cancelable: false}
+    );
+  }
+
+  remove() {
+    this.props.productHolder.remove(this.props.index);
+  }
+
 }
 
 const styles = StyleSheet.create({

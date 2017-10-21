@@ -27,11 +27,9 @@ class ProductListHolder {
   @action
   footLoad() {
     this.footLoading = !this.footLoading;
-    setTimeout(_ => {
-      this.dataList = this.dataList.concat(this.load(this.startCount, this.startCount + LOAD_NUM));
-      this.footLoading = !this.footLoading;
-      this.startCount += LOAD_NUM;
-    }, 0);
+    this.dataList = this.dataList.concat(this.load(this.startCount, this.startCount + LOAD_NUM));
+    this.footLoading = !this.footLoading;
+    this.startCount += LOAD_NUM;
   }
 
   @action
@@ -49,8 +47,8 @@ class ProductListHolder {
   }
 
   @action
-  delete() {
-
+  remove(index: number) {
+    this.dataList = BCSRealm.getInstance().remove(index);
   }
 }
 
