@@ -8,11 +8,21 @@ var NativeEventEmitter = require('Platform').OS === 'android'
 const SCAN_RESULT = 'SCAN_RESULT';
 const SCAN_CONTENT = 'SCAN_CONTENT';
 
+/**
+ * 打开扫码界面
+ * @param component
+ * @param callback
+ */
 function openScanPage(component: Component, callback: Function) {
 	registerComponentListener(component, callback);
 	ScanProductModule.openScanPage();
 }
 
+/**
+ * 注册扫码成功回调函数
+ * @param component
+ * @param callback
+ */
 function registerComponentListener(component: Component, callback: Function) {
 	component._scanListener_ && component._scanListener_.remove();
 	component._scanListener_ = NativeEventEmitter.addListener(SCAN_RESULT, (result)=>{

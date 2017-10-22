@@ -60,7 +60,7 @@ export default class App extends Component<{}> {
     if(!hasInit) {
       return (
         <View style = {styles.loadingContainer}>
-          <Text style = {{aligeSelf: 'center'}}>{this.initHolder.title}</Text>
+          <Text style = {{alignSelf: 'center'}}>{this.initHolder.title}</Text>
         </View>
       );
     }
@@ -77,7 +77,6 @@ export default class App extends Component<{}> {
       <BCSNavBar
         leftPress = {this._openScanPage}
         leftContent = {'扫描'}
-        title = {'demo'}
       />
     );
   }

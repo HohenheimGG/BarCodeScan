@@ -27,6 +27,9 @@ class ProductListHolder {
   @observable
   headLoading = false;
 
+	/**
+   * 上拉加载
+   */
   @action
   footLoad() {
     this.footLoading = !this.footLoading;
@@ -35,6 +38,9 @@ class ProductListHolder {
     this.startCount += LOAD_NUM;
   }
 
+	/**
+   * 下拉刷新
+   */
   @action
   headLoad() {
     this.headLoading = !this.headLoading;
@@ -49,6 +55,10 @@ class ProductListHolder {
     return result.slice(start, end);
   }
 
+	/**
+   * 删除
+   * @param index
+   */
   @action
   remove(index: number) {
     BCSRealm.getInstance().remove(Constant.PRODUCT_INFO_DB, index);
@@ -59,7 +69,11 @@ class ProductListHolder {
     else
       this.dataList = this.dataList.slice(0, index).concat(this.dataList.slice(index + 1, this.dataList.length));
   }
-  
+
+	/**
+   * 插入数据
+   * @param result
+   */
   insert(result: Object) {
     let code = result[SCAN_CONTENT];
     let list = code.split('-');
