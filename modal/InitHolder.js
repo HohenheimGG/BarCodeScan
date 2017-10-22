@@ -1,6 +1,3 @@
-/**
- * Created by hohenheim on 17/10/20.
- */
 
 import {observable, action} from 'mobx'
 import {Component} from 'react';

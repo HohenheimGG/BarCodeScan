@@ -13,10 +13,6 @@ import com.facebook.react.bridge.ReactContextBaseJavaModule;
 import com.facebook.react.bridge.ReactMethod;
 import com.facebook.react.bridge.WritableMap;
 
-/**
- * Created by hohenheim on 17/10/17.
- */
-
 public class ScanProductModule extends ReactContextBaseJavaModule{
 
     private static final String MODULE_NAME = "ScanProductModule";

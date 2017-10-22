@@ -4,10 +4,6 @@ import com.barcodescan.realm.modal.ProductInfo;
 
 import io.realm.Realm;
 
-/**
- * Created by hohenheim on 17/10/20.
- */
-
 public class ProductInfoController {
 
     private static ProductInfoController controller;

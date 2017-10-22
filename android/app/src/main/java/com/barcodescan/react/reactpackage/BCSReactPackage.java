@@ -8,10 +8,6 @@ import com.facebook.react.uimanager.ViewManager;
 import java.util.Collections;
 import java.util.List;
 
-/**
- * Created by hohenheim on 17/10/17.
- */
-
 public class BCSReactPackage implements ReactPackage {
 
     @Override

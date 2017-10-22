@@ -1,5 +1,4 @@
 /**
- * Created by hohenheim on 17/10/18.
  * @providesModule Common
  */
 

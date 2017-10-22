@@ -1,6 +1,3 @@
-/**
- * Created by hohenheim on 17/10/19.
- */
 
 import {observable, action, computed} from 'mobx'
 import {BCSRealm} from 'RealmController';
