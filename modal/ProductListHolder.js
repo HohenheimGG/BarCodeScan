@@ -88,7 +88,6 @@ class ProductListHolder {
       price: list[2],
       code: code
     };
-    console.warn('result: ' + JSON.stringify(params));
     BCSRealm.getInstance().write(
       Constant.PRODUCT_INFO_DB,
       params,

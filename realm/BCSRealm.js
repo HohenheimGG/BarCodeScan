@@ -45,7 +45,7 @@ class BCSRealm {
       beforeCallback && beforeCallback();
       let code = params.code || '';
       let tempData = this.tempList.filtered(`code = "${code}"`);
-      if(!tempData) {
+      if(tempData && tempData.length > 1) {
         afterCallback && afterCallback(Constant.INSERT_REPEAT);
         return;
       }
